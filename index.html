@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>JS Bin</title>
+		<meta name="viewport" content="initial-scale=1, user-scalable=no">
+		<style>
+		body {margin: 0;}
+		#el{background-color: red; width: 10rem; height: 15rem; position: absolute; overflow: hidden;}
+		@-webkit-keyframes aripple {
+			from {
+				-webkit-transform: translate(-50%, -50%) scale(0.1);
+			}
+			to {
+				-webkit-transform: translate(-50%, -50%);
+				opacity: 0;
+			}
+		}
+
+		ripple {
+			width: 1200px;
+			height: 1200px;
+			position: absolute;
+			-webkit-animation: aripple 3s ease-out;
+			background-color: white;
+			border-radius: 99999px;
+			-webkit-transform: translate(-50%, -50%);
+			will-change: -webkit-transform, opacity;
+		}
+		</style>
+		<script>
+			window.onload = function() {
+				function ripple(element, x, y, o) {
+					var rip = document.createElement('ripple');
+					rip.style.left=x+"px";
+					rip.style.top=y+"px";
+					rip.style.opacity=o;
+					rip.addEventListener("webkitAnimationEnd", function() {
+						element.removeChild(rip);
+					});
+					element.appendChild(rip);
+				}
+				el.addEventListener('click', function(e) {
+					doubleRipple(
+						this,
+						e.pageX - this.offsetLeft,
+						e.pageY - this.offsetTop
+					);
+				});
+				function doubleRipple(e,x,y) {
+					ripple(e,x,y,1);
+
+
+					ripple(e,-x,y,0.3);
+					ripple(e,x,-y,0.3);
+					ripple(e,e.offsetWidth*2-x,y,0.3);
+					ripple(e,x,e.offsetHeight*2-y,0.3);
+
+
+					ripple(e,e.offsetWidth*2+x,y,0.1);
+					ripple(e,-e.offsetWidth*2+x,y,0.1);
+					ripple(e,x,e.offsetHeight*2+y,0.1);
+					ripple(e,x,-e.offsetHeight*2+y,0.1);
+
+					ripple(e,-x,-y,0.1);
+					ripple(e,e.offsetWidth*2-x,-y,0.1);
+					ripple(e,e.offsetWidth*2-x,e.offsetHeight*2-y,0.1);
+					ripple(e,-x,e.offsetHeight*2-y,0.1);
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div id="el"></div>
+	</body>
+</html>
