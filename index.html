@@ -5,28 +5,35 @@
 		<title>Triple Ripple</title>
 		<meta name="viewport" content="initial-scale=1, user-scalable=no">
 		<style>
-		body {margin: 0;}
-		#el{background-color: red; width: 10rem; height: 15rem; position: absolute; overflow: hidden;}
-		@-webkit-keyframes aripple {
-			from {
-				-webkit-transform: translate(-50%, -50%) scale(0.1);
+			body {margin: 0;}
+			#el {
+				background-color: red;
+				width: 10rem;
+				height: 15rem;
+				position: absolute;
+				overflow: hidden;
 			}
-			to {
-				-webkit-transform: translate(-50%, -50%);
-				opacity: 0;
+			
+			@-webkit-keyframes aripple {
+				from {
+					-webkit-transform: translate(-50%, -50%) scale(0.1);
+				}
+				to {
+					-webkit-transform: translate(-50%, -50%);
+					opacity: 0;
+				}
 			}
-		}
 
-		ripple {
-			width: 1200px;
-			height: 1200px;
-			position: absolute;
-			-webkit-animation: aripple 3s ease-out;
-			background-color: white;
-			border-radius: 99999px;
-			-webkit-transform: translate(-50%, -50%);
-			will-change: -webkit-transform, opacity;
-		}
+			ripple {
+				width: 1200px;
+				height: 1200px;
+				position: absolute;
+				/* -webkit-animation: aripple 3s ease-out; */
+				background-color: white;
+				border-radius: 99999px;
+				transform: translate(-50%, -50%);
+				will-change: transform, opacity;
+			}
 		</style>
 		<script>
 			window.onload = function() {
@@ -35,10 +42,15 @@
 					rip.style.left=x+"px";
 					rip.style.top=y+"px";
 					rip.style.opacity=o;
-					rip.addEventListener("webkitAnimationEnd", function() {
-						element.removeChild(rip);
-					});
 					element.appendChild(rip);
+					rip.animate([
+						{transform: "translate(-50%, -50%) scale(0)", opacity: o},
+						{transform: "translate(-50%, -50%) scale(1)", opacity: 0}
+					], {
+						duration: 3000
+					}).onfinish = function() {
+						element.removeChild(rip);
+					}
 				}
 				el.addEventListener('click', function(e) {
 					doubleRipple(
@@ -51,21 +63,21 @@
 					ripple(e,x,y,1);
 
 
-					ripple(e,-x,y,0.3);
-					ripple(e,x,-y,0.3);
-					ripple(e,e.offsetWidth*2-x,y,0.3);
-					ripple(e,x,e.offsetHeight*2-y,0.3);
+					ripple(e,-x,y,0.2);
+					ripple(e,x,-y,0.2);
+					ripple(e,e.offsetWidth*2-x,y,0.2);
+					ripple(e,x,e.offsetHeight*2-y,0.2);
 
 
-					ripple(e,e.offsetWidth*2+x,y,0.1);
-					ripple(e,-e.offsetWidth*2+x,y,0.1);
-					ripple(e,x,e.offsetHeight*2+y,0.1);
-					ripple(e,x,-e.offsetHeight*2+y,0.1);
+					ripple(e,e.offsetWidth*2+x,y,0.05);
+					ripple(e,-e.offsetWidth*2+x,y,0.05);
+					ripple(e,x,e.offsetHeight*2+y,0.05);
+					ripple(e,x,-e.offsetHeight*2+y,0.05);
 
-					ripple(e,-x,-y,0.1);
-					ripple(e,e.offsetWidth*2-x,-y,0.1);
-					ripple(e,e.offsetWidth*2-x,e.offsetHeight*2-y,0.1);
-					ripple(e,-x,e.offsetHeight*2-y,0.1);
+					ripple(e,-x,-y,0.05);
+					ripple(e,e.offsetWidth*2-x,-y,0.05);
+					ripple(e,e.offsetWidth*2-x,e.offsetHeight*2-y,0.05);
+					ripple(e,-x,e.offsetHeight*2-y,0.05);
 				}
 			}
 		</script>
