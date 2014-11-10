@@ -25,8 +25,8 @@
 			}
 
 			ripple {
-				width: 1200px;
-				height: 1200px;
+				width: 100px;
+				height: 100px;
 				position: absolute;
 				/* -webkit-animation: aripple 3s ease-out; */
 				background-color: white;
@@ -45,7 +45,7 @@
 					element.appendChild(rip);
 					rip.animate([
 						{transform: "translate(-50%, -50%) scale(0)", opacity: o},
-						{transform: "translate(-50%, -50%) scale(1)", opacity: 0}
+						{transform: "translate(-50%, -50%) scale(10)", opacity: 0}
 					], {
 						duration: 3000
 					}).onfinish = function() {
