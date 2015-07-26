@@ -7,82 +7,75 @@
 		<style>
 			body {margin: 0;}
 			#el {
-				background-color: red;
-				width: 10rem;
-				height: 15rem;
+				width: 160px;
+				height: 240px;
 				position: absolute;
 				overflow: hidden;
 			}
-			
-			@-webkit-keyframes aripple {
-				from {
-					-webkit-transform: translate(-50%, -50%) scale(0.1);
-				}
-				to {
-					-webkit-transform: translate(-50%, -50%);
-					opacity: 0;
-				}
-			}
-
-			ripple {
-				width: 100px;
-				height: 100px;
-				position: absolute;
-				/* -webkit-animation: aripple 3s ease-out; */
-				background-color: white;
-				border-radius: 99999px;
-				transform: translate(-50%, -50%);
-				will-change: transform, opacity;
-			}
 		</style>
 		<script>
+			var w = 160;
+			var h = 240;
 			window.onload = function() {
-				function ripple(element, x, y, o) {
-					var rip = document.createElement('ripple');
-					rip.style.left=x+"px";
-					rip.style.top=y+"px";
-					rip.style.opacity=o;
-					element.appendChild(rip);
-					rip.animate([
-						{transform: "translate(-50%, -50%) scale(0)", opacity: o},
-						{transform: "translate(-50%, -50%) scale(10)", opacity: 0}
-					], {
-						duration: 3000
-					}).onfinish = function() {
-						element.removeChild(rip);
-					}
+				var ctx = el.getContext('2d');
+				var drawCalls = [];
+				function ripple(t, x, y, o) {
+					ctx.beginPath();
+					ctx.arc(x,y,t*500,0,Math.PI*2,true);
+					ctx.fillStyle = "rgba(255,255,255," + (1-t)*o + ")";
+					ctx.fill();
 				}
 				el.addEventListener('click', function(e) {
-					doubleRipple(
-						this,
+					triggerRipple(
 						e.pageX - this.offsetLeft,
 						e.pageY - this.offsetTop
 					);
 				});
-				function doubleRipple(e,x,y) {
-					ripple(e,x,y,1);
-
-
-					ripple(e,-x,y,0.2);
-					ripple(e,x,-y,0.2);
-					ripple(e,e.offsetWidth*2-x,y,0.2);
-					ripple(e,x,e.offsetHeight*2-y,0.2);
-
-
-					ripple(e,e.offsetWidth*2+x,y,0.05);
-					ripple(e,-e.offsetWidth*2+x,y,0.05);
-					ripple(e,x,e.offsetHeight*2+y,0.05);
-					ripple(e,x,-e.offsetHeight*2+y,0.05);
-
-					ripple(e,-x,-y,0.05);
-					ripple(e,e.offsetWidth*2-x,-y,0.05);
-					ripple(e,e.offsetWidth*2-x,e.offsetHeight*2-y,0.05);
-					ripple(e,-x,e.offsetHeight*2-y,0.05);
+				function triggerRipple(x,y) {
+					addDrawCall(x,y,3000);
 				}
+				function addDrawCall(x,y, duration) {
+					var startTime = Date.now();
+					drawCalls.push(function(now) {
+						doubleRipple((now-startTime)/3000,x,y)
+					});
+					setTimeout(function() {
+						drawCalls.shift();
+					},duration);
+				}
+				function doubleRipple(t, x, y) {
+					ripple(t, x, y, 1);
+
+
+					ripple(t,-x,y,0.2);
+					ripple(t,x,-y,0.2);
+					ripple(t,w*2-x,y,0.2);
+					ripple(t,x,h*2-y,0.2);
+
+
+					ripple(t,w*2+x,y,0.05);
+					ripple(t,w*2+x,y,0.05);
+					ripple(t,x,h*2+y,0.05);
+					ripple(t,x,h*2+y,0.05);
+
+					ripple(t,-x,-y,0.05);
+					ripple(t,w*2-x,-y,0.05);
+					ripple(t,w*2-x,h*2-y,0.05);
+					ripple(t,-x,h*2-y,0.05);
+				}
+				function animate() {
+					ctx.beginPath()
+					ctx.fillStyle = "red";
+					ctx.fillRect(0,0,500,500);
+					for (var i in drawCalls) {
+						drawCalls[i](Date.now());
+					}
+					requestAnimationFrame(animate);
+				} animate();
 			}
 		</script>
 	</head>
 	<body>
-		<div id="el"></div>
+		<canvas id="el" height=240 width=160></canvas>
 	</body>
 </html>
